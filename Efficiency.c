@@ -103,13 +103,13 @@ void move_to_pile(int connection, int tower_id) {
 void move_block(int connection, int source_pile, int destination_pile, char source_height, char destination_height) {
     move_to_pile(connection, source_pile);  // Go to source tower
     move_to_height(connection, source_height); // Lower to pick up the block
-    close_claw(connection);            // Grab the block
-    return_to_base(connection);              // Raise the block
+    close_claw(connection); // Grab the block
+    return_to_base(connection); // Raise the block
 
     move_to_pile(connection, destination_pile); // Go to destination tower
     move_to_height(connection, destination_height); // Lower to place the block
-    open_claw(connection);                  // Release the block
-    return_to_base(connection);                   // Raise the arm
+    open_claw(connection); // Release the block
+    return_to_base(connection); // Raise the arm
 }
 
 int main(int argc, char* argv[]) {
