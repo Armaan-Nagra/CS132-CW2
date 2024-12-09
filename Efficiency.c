@@ -100,14 +100,14 @@ void move_to_tower(int connection, int tower_id) {
 }
 
 // Move block from one tower to another
-void move_block(int connection, int source, int destination, char source_position, char destination_position) {
-    move_to_tower(connection, source);  // Go to source tower
-    position(connection, source_position); // Lower to pick up the block
+void move_block(int connection, int source_pile, int destination_pile, char source_height, char destination_height) {
+    move_to_tower(connection, source_pile);  // Go to source tower
+    position(connection, source_height); // Lower to pick up the block
     close_claw(connection);            // Grab the block
     brick_up(connection);              // Raise the block
 
-    move_to_tower(connection, destination); // Go to destination tower
-    position(connection, destination_position); // Lower to place the block
+    move_to_tower(connection, destination_pile); // Go to destination tower
+    position(connection, destination_height); // Lower to place the block
     open_claw(connection);                  // Release the block
     brick_up(connection);                   // Raise the arm
 }
