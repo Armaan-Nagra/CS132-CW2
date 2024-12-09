@@ -3,7 +3,6 @@
 #include <time.h>
 #include <unistd.h>
 
-// Macros for servo IDs
 #define CLAW_ID 5
 #define ARM_BASE_ID 1
 #define ARM_JOINT_1_ID 2
