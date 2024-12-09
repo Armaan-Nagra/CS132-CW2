@@ -52,7 +52,7 @@ int brick_up(int connection){
    return 0;
 }
 
-int position(int connection, char plane){
+int move_to_height(int connection, char plane){
     unsigned char plane_positions[][2] = {
         {0x00, 0xfa}, // Motor 2
         {0x02, 0x09}, // Motor 3
@@ -87,7 +87,7 @@ int position(int connection, char plane){
 }
 
 
-void move_to_tower(int connection, int tower_id) {
+void move_to_pile(int connection, int tower_id) {
    unsigned char tower_positions[][2] = {
        {0x01, 0xa0}, // Tower 1
        {0x02, 0x00}, // Tower 2
@@ -101,13 +101,13 @@ void move_to_tower(int connection, int tower_id) {
 
 // Move block from one tower to another
 void move_block(int connection, int source_pile, int destination_pile, char source_height, char destination_height) {
-    move_to_tower(connection, source_pile);  // Go to source tower
-    position(connection, source_height); // Lower to pick up the block
+    move_to_pile(connection, source_pile);  // Go to source tower
+    move_to_height(connection, source_height); // Lower to pick up the block
     close_claw(connection);            // Grab the block
     brick_up(connection);              // Raise the block
 
-    move_to_tower(connection, destination_pile); // Go to destination tower
-    position(connection, destination_height); // Lower to place the block
+    move_to_pile(connection, destination_pile); // Go to destination tower
+    move_to_height(connection, destination_height); // Lower to place the block
     open_claw(connection);                  // Release the block
     brick_up(connection);                   // Raise the arm
 }
