@@ -43,7 +43,7 @@ int close_claw(int connection){
    return 0;
 }
 
-int brick_up(int connection){
+int return_to_base(int connection){
    move_to_location(connection,2,0x01,0x9a);
    wait_until_done(connection,15, 2);
    move_to_location(connection,1,0x02,0x00); 
@@ -104,18 +104,18 @@ void move_block(int connection, int source_pile, int destination_pile, char sour
     move_to_pile(connection, source_pile);  // Go to source tower
     move_to_height(connection, source_height); // Lower to pick up the block
     close_claw(connection);            // Grab the block
-    brick_up(connection);              // Raise the block
+    return_to_base(connection);              // Raise the block
 
     move_to_pile(connection, destination_pile); // Go to destination tower
     move_to_height(connection, destination_height); // Lower to place the block
     open_claw(connection);                  // Release the block
-    brick_up(connection);                   // Raise the arm
+    return_to_base(connection);                   // Raise the arm
 }
 
 int main(int argc, char* argv[]) {
     int connection = open_connection("/dev/ttyUSB0",B1000000);
 
-    brick_up(connection);
+    return_to_base(connection);
     open_claw(connection);
 
     move_block(connection, 1, 3, 'z', 'x');
