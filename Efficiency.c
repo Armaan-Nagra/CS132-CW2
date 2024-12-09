@@ -87,19 +87,19 @@ int move_to_height(int connection, char plane){
 }
 
 
-void move_to_pile(int connection, int tower_id) {
-   unsigned char tower_positions[][2] = {
-       {0x01, 0xa0}, // Tower 1
-       {0x02, 0x00}, // Tower 2
-       {0x02, 0x59}  // Tower 3
+void move_to_pile(int connection, int pile_id) {
+   unsigned char pile_positions[][2] = {
+       {0x01, 0xa0}, // Pile 1
+       {0x02, 0x00}, // Pile 2
+       {0x02, 0x59}  // Pile 3
    };
-   if (tower_id >= 1 && tower_id <= 3) {
-       move_to_location(connection, ARM_BASE_ID, tower_positions[tower_id - 1][0], tower_positions[tower_id - 1][1]);
+   if (pile_id >= 1 && pile_id <= 3) {
+       move_to_location(connection, ARM_BASE_ID, pile_positions[pile_id - 1][0], pile_positions[pile_id - 1][1]);
        wait_until_done(connection, ARM_BASE_ID, 3);
    }
 }
 
-// Move block from one tower to another
+// Move block from one place to another
 void move_block(int connection, int source_pile, int destination_pile, char source_height, char destination_height) {
     move_to_pile(connection, source_pile);  // Go to source tower
     move_to_height(connection, source_height); // Lower to pick up the block
