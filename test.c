@@ -12,9 +12,9 @@
 #define MAX_BLOCKS 4
 
 // Number of current blocks in each pile/tower 
-int tower1_plane = MAX_BLOCKS; 
-int tower2_plane = 0;
-int tower3_plane = 0;
+int tower1_count = MAX_BLOCKS; 
+int tower2_count = 0;
+int tower3_count = 0;
 
 void move_to_location(int connection, unsigned char id,
            unsigned char loc_h, unsigned char loc_l) {
@@ -124,31 +124,30 @@ void move_block(int connection, int source, int destination, char source_positio
     open_claw(connection);                  // Release the block
     return_to_base(connection);                   // Raise the arm
 
-    // Update the values of the number of blocks in
-    // each tower/pile
+    // Update the count of each tower/pile
     if (source == 1)
-        tower1_plane --;
+        tower1_count --;
     else if (source == 2)
-        tower2_plane --;
+        tower2_count --;
     else
-        tower3_plane --;
+        tower3_count --;
 
     if (destination == 1)
-        tower1_plane ++;
+        tower1_count ++;
     else if (destination == 2)
-        tower2_plane ++;
+        tower2_count ++;
     else
-        tower3_plane ++;
+        tower3_count ++;
 }
 
-// Return the position of the top block on the argument pile/tower
-int find_plane(int connection, int tower){
+// Return the count of the specified pile/tower
+int find_count(int connection, int tower){
     if (tower == 1)
-        return tower1_plane;
+        return tower1_count;
     else if (tower == 2)
-        return tower2_plane;
+        return tower2_count;
     else
-        return tower3_plane;
+        return tower3_count;
 }
 
 // Recursive Tower of Hanoi
@@ -156,10 +155,10 @@ void solve_hanoi(int connection, int n, int source, int auxiliary, int destinati
     // Shift last block from pile 1 to pile 3
     if (n == 1) {
         // Find the position of the top block on the source pile/tower
-        int source_plane = find_plane(connection, source);
+        int source_plane = find_count(connection, source);
                
         // Calculate the position the block should be placed on the destination pile/tower
-        int destination_plane = find_plane(connection, destination) + 1;
+        int destination_plane = find_count(connection, destination) + 1;
                
         // Execute the current move
         move_block(connection, source, destination, source_plane, destination_plane);
@@ -169,10 +168,10 @@ void solve_hanoi(int connection, int n, int source, int auxiliary, int destinati
     solve_hanoi(connection, n - 1, source, destination, auxiliary);
            
     // Find the position of the top block on the source pile/tower
-    int source_plane = find_plane(connection, source); 
+    int source_plane = find_count(connection, source); 
            
     // Calculate the position the block should be placed on the destination pile/tower
-    int destination_plane = find_plane(connection, destination) + 1;
+    int destination_plane = find_count(connection, destination) + 1;
            
     // Execute current move
     move_block(connection, source, destination, source_plane, destination_plane);
