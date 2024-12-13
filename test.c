@@ -11,7 +11,8 @@
 #define ARM_JOINT_3_ID 4
 #define MAX_BLOCKS 4
 
-int tower1_plane = MAX_BLOCKS;
+// Number of current blocks in each pile/tower 
+int tower1_plane = MAX_BLOCKS; 
 int tower2_plane = 0;
 int tower3_plane = 0;
 
@@ -47,7 +48,7 @@ int close_claw(int connection){
    return 0;
 }
 
-int brick_up(int connection){
+int return_to_base(int connection){
    move_to_location(connection,2,0x01,0x9a);
    wait_until_done(connection,15, 2);
    move_to_location(connection,1,0x02,0x00); 
@@ -116,13 +117,15 @@ void move_block(int connection, int source, int destination, char source_positio
     move_to_tower(connection, source);  // Go to source tower
     position(connection, source_position); // Lower to pick up the block
     close_claw(connection);            // Grab the block
-    brick_up(connection);              // Raise the block
+    return_to_base(connection);              // Raise the block
 
     move_to_tower(connection, destination); // Go to destination tower
     position(connection, destination_position); // Lower to place the block
     open_claw(connection);                  // Release the block
-    brick_up(connection);                   // Raise the arm
+    return_to_base(connection);                   // Raise the arm
 
+    // Update the values of the number of blocks in
+    // each tower/pile
     if (source == 1)
         tower1_plane --;
     else if (source == 2)
@@ -138,6 +141,7 @@ void move_block(int connection, int source, int destination, char source_positio
         tower3_plane ++;
 }
 
+// Return the position of the top block on the argument pile/tower
 int find_plane(int connection, int tower){
     if (tower == 1)
         return tower1_plane;
@@ -147,35 +151,46 @@ int find_plane(int connection, int tower){
         return tower3_plane;
 }
 
-// Recursive Tower of Hanoi solver
+// Recursive Tower of Hanoi
 void solve_hanoi(int connection, int n, int source, int auxiliary, int destination) {
+    // Shift last block from pile 1 to pile 3
     if (n == 1) {
-        int source_plane = find_plane(connection, source); // source is the tower
-        int destination_plane = find_plane(connection, destination) + 1; // destination is the tower
+        // Find the position of the top block on the source pile/tower
+        int source_plane = find_plane(connection, source);
+               
+        // Calculate the position the block should be placed on the destination pile/tower
+        int destination_plane = find_plane(connection, destination) + 1;
+               
+        // Execute the current move
         move_block(connection, source, destination, source_plane, destination_plane);
         return;
     }
-
+    // Shift n-1 blocks from pile 1 to pile 2, using pile 3
     solve_hanoi(connection, n - 1, source, destination, auxiliary);
-    int source_plane = find_plane(connection, source); // source is the tower
-    int destination_plane = find_plane(connection, destination) + 1; // destination is the tower
+           
+    // Find the position of the top block on the source pile/tower
+    int source_plane = find_plane(connection, source); 
+           
+    // Calculate the position the block should be placed on the destination pile/tower
+    int destination_plane = find_plane(connection, destination) + 1;
+           
+    // Execute current move
     move_block(connection, source, destination, source_plane, destination_plane);
+           
+    // Shift n-1 blocks from pile 2 to pile 3, using pile 1
     solve_hanoi(connection, n - 1, auxiliary, source, destination);
 }
 
 // Main function
 int main(int argc, char *argv[]) {
     int connection = open_connection("/dev/ttyUSB0", B1000000);
-    if (connection < 0) {
-        fprintf(stderr, "Error: Unable to open connection\n");
-        return -1;
-    }
-
-    brick_up(connection);
+           
+    // Initialize start up sequence
+    return_to_base(connection);
     open_claw(connection);
-
+           
+    // Initiate recursive algorithm
     solve_hanoi(connection, MAX_BLOCKS, 1, 2, 3);
 
-    close_connection(connection);
     return 0;
 }   
